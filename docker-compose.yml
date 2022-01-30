@@ -1,10 +1,32 @@
-version: "3"
+version: '3'
 services:
+  nginx:
+    depends_on:
+      - api
+      - client
+    restart: always
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./nginx
+    ports:
+    # 5001 can be anything, this is port I hit on my chrome browser
+      - '5001:80'
+  api:
+    build:
+      dockerfile: Dockerfile
+      context: ./api
+    # not needed this is to map local directory to container  
+    volumes:
+      - type : bind
+        source : ./api/datingapp.db
+        target : /app/datingapp.db
   client:
-    stdin_open: true
+   # this is for react
+   # stdin_open: true
     build:
       dockerfile: Dockerfile
       context: ./client
-    volumes:
-      - /app/node_modules
-      - ./client:/app
+    # not needed this is to map local directory to container   
+    # volumes:
+    #   - /app/node_modules
+    #   - ./client:/app
